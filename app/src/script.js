@@ -32,7 +32,7 @@ app.store(async (state, { event }) => {
 
 async function getServers() {
   const normalizedServers = []
-  const servers = await app.call('size').toPromise()
+  const servers = await app.call('katalystCount').toPromise()
   console.log(servers)
   for (let i = 0; i < servers; i++) {
     console.log(i, servers)
