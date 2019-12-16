@@ -2,6 +2,7 @@
 
 const { assertRevert } = require('@aragon/test-helpers/assertThrow')
 const { getEventArgument } = require('@aragon/test-helpers/events')
+const { assertEvent } = require('@aragon/test-helpers/assertEvent')(web3)
 const { hash } = require('eth-ens-namehash')
 const deployDAO = require('./helpers/deployDAO')
 
@@ -19,7 +20,6 @@ const ERROR_KATALYST_NOT_FOUND = 'ERROR_KATALYST_NOT_FOUND'
 const domain1 = 'https://decentraland-1.org'
 const domain2 = 'https://decentraland-2.org'
 const domain3 = 'https://decentraland-3.org'
-const notADomain = 'https://decentraland-not-a-domain.org'
 
 contract(
   'CatalystApp',
@@ -83,12 +83,17 @@ contract(
         let katalystCount = await app.katalystCount()
         assert.equal(katalystCount.toNumber(), 0)
 
-        await app.addKatalyst(katalystOwner1, domain1, fromUser)
+        const receipt = await app.addKatalyst(katalystOwner1, domain1, fromUser)
 
         katalystCount = await app.katalystCount()
         assert.equal(katalystCount.toNumber(), 1)
 
         const katalystId = await app.katalystIds(0)
+        assertEvent(receipt, 'AddKatalyst', {
+          _id: katalystId,
+          _owner: katalystOwner1,
+          _domain: domain1
+        })
 
         const katalystIndex = await app.katalystIndexById(katalystId)
         const [id, owner, domain] = await app.katalystById(katalystId)
@@ -115,7 +120,12 @@ contract(
         assert.equal(katalyst[1], katalystOwner1)
         assert.equal(katalyst[2], domain1)
 
-        await app.removeKatalyst(katalystId, fromUser)
+        const receipt = await app.removeKatalyst(katalystId, fromUser)
+        assertEvent(receipt, 'RemoveKatalyst', {
+          _id: katalystId,
+          _owner: katalystOwner1,
+          _domain: domain1
+        })
 
         katalystCount = await app.katalystCount()
         assert.equal(katalystCount.toNumber(), 0)

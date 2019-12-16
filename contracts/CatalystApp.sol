@@ -29,7 +29,7 @@ contract CatalystApp is AragonApp {
     mapping(bytes32 => uint256) public katalystIndexById;
     bytes32[] public katalystIds;
 
-    event Addkatalyst(bytes32 indexed _id, address _owner, string _domain);
+    event AddKatalyst(bytes32 indexed _id, address _owner, string _domain);
     event RemoveKatalyst(bytes32 indexed _id, address _owner, string _domain);
 
     function initialize() public onlyInit {
@@ -75,7 +75,7 @@ contract CatalystApp is AragonApp {
         katalystIndexById[id] = index - 1;
 
         // Log
-        emit Addkatalyst(id, _owner, _domain);
+        emit AddKatalyst(id, _owner, _domain);
     }
 
     function removeKatalyst(bytes32 _id) external auth(MODIFY_ROLE)  {
